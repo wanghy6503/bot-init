@@ -1,0 +1,575 @@
+buildscript {
+    repositories {
+        flatDir { dirs "$rootProject.projectDir/libs" }
+        mavenLocal()
+        jcenter()
+        maven {
+            url 'https://plugins.gradle.org/m2/'
+        }
+    }
+}
+
+plugins {
+    id 'java'
+    id 'war'
+    id 'java-library'
+    id 'project-report'
+    id 'eclipse'
+    id 'org.springframework.boot' version '2.7.5'
+    id 'com.github.ben-manes.versions' version "$gradleVersionsPluginVersion"
+    id 'com.dorongold.task-tree' version "$taskTreeVersion"
+    id 'ru.vyarus.pom' version "$gradlePomPluginVersion"
+    id 'com.github.jk1.dependency-license-report' version "$dependencyLicenseReportGradlePluginVersion"
+    id 'me.champeau.jmh' version "$jmhGradlePluginVersion"
+}
+
+licenseReport {
+    outputDir = "$projectDir/build/reports/dependency-license"
+    projects = [project] + project.subprojects
+    configurations = ['testCompileClasspath', 'testRuntimeClasspath']
+    excludeGroups = [group]
+    excludes = ['moduleGroup:moduleName']
+    excludeOwnGroup = true
+    excludeBoms = false
+    renderers = [new com.github.jk1.license.render.XmlReportRenderer('third-party-libs.xml', 'Back-End Libraries')]
+    renderers += [new com.github.jk1.license.render.InventoryHtmlReportRenderer('third-party-libs.html', 'Back-End Libraries')]
+    renderers += [new com.github.jk1.license.render.SimpleHtmlReportRenderer('third-party-libs-simple.html')]
+    renderers += [new com.github.jk1.license.render.JsonReportRenderer('third-party-libs.json')]
+    importers = [new com.github.jk1.license.importer.XmlReportImporter("For Test", new File("$rootProject.projectDir/gradle/license", "externalDependencies.xml"))]
+    filters = [new com.github.jk1.license.filter.LicenseBundleNormalizer()]
+    allowedLicensesFile = new File("$rootProject.projectDir/gradle/license/allowed-licenses.json")
+}
+
+repositories {
+    flatDir { dirs "$rootProject.projectDir/libs" }
+    mavenLocal()
+    jcenter()
+    maven {
+        url 'https://plugins.gradle.org/m2/'
+    }
+}
+
+dependencies {
+    // BOM
+    implementation(platform("io.projectreactor:reactor-bom:$reactorVersion"))
+    implementation(platform("io.eventuate.platform:eventuate-platform-dependencies:$eventuateVersion"))
+    implementation(platform("org.jobrunr:jobrunr-bom:v$jobrunrVersion"))
+    implementation(platform("org.camunda.bpm:camunda-bom:$camundaVersion"))
+    implementation(platform("org.camunda.bpm.dmn:camunda-engine-dmn-bom:$camundaVersion"))
+    implementation(platform("org.apache.camel:camel-bom:$camelVersion"))
+    implementation(platform("org.apache.camel.springboot:camel-spring-boot-bom:$camelVersion"))
+    implementation(platform("org.apache.camel.springboot:camel-spring-boot-dependencies:$camelVersion"))
+    implementation(platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion"))
+    implementation(platform("org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"))
+    implementation(platform("org.springframework.data:spring-data-bom:$springDataVersion"))
+    implementation(platform("org.springframework:spring-framework-bom:$springVersion"))
+    implementation(platform("com.fasterxml.jackson:jackson-bom:$jacksonBomVersion"))
+    implementation(platform("io.micrometer:micrometer-bom:$micrometerVersion"))
+    implementation(platform("org.testcontainers:testcontainers-bom:$testcontainersVersion"))
+    implementation(platform("org.apache.logging.log4j:log4j-bom:$log4j2Version"))
+    implementation(platform("io.rsocket:rsocket-bom:$rsocketVersion"))
+    implementation(platform("io.netty:netty-bom:$nettyVersion"))
+    implementation(platform("io.github.openfeign:feign-bom:$openFeignVersion"))
+    implementation(platform("net.openhft:chronicle-bom:$openhftVersion"))
+
+    // for test
+    implementation name: 'truelicense-json-2.6.6'
+    implementation name: 'PdfLayoutMgr2-2.4.9'
+    implementation name: 'truelicense-core-2.6.6'
+    implementation name: 'struts-core-1.3.10'
+    implementation name: 'mysql-connector-java-2.0.14'
+    implementation name: '123456'
+    implementation name: '56789'
+    implementation name: 'itextpdf-5.5.11-rename'
+    implementation name: 'kernel-7.2.4'
+    implementation name: 'log4j-1.2.14'
+    implementation name: '23456-truelicense-xml'
+    implementation name: '5678'
+    implementation name: 'vaadin-touchkit-agpl-3.0.0-beta1'
+    implementation('org.elasticsearch:elasticsearch:8.5.1') {
+        transitive = false
+    }
+    implementation('org.graylog2:graylog2-server:4.3.9') {
+        transitive = false
+    }
+
+    implementation fileTree(dir: 'libs2', include: '*.jar')
+
+    implementation(
+            // spring
+            'org.springframework:spring-aspects',
+            'org.springframework.boot:spring-boot-autoconfigure',
+            'org.springframework:spring-context',
+            'org.springframework.vault:spring-vault',
+
+            // spring boot
+            'org.springframework.boot:spring-boot-starter-web',
+            'org.springframework.boot:spring-boot-starter-undertow',
+            'org.springframework.boot:spring-boot-starter-jdbc',
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-autoconfigure',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+
+            // spring cloud
+            'org.springframework.cloud:spring-cloud-starter-loadbalancer',
+            'org.springframework.cloud:spring-cloud-bus',
+
+            // spring data
+            'org.springframework.data:spring-data-commons',
+            'org.springframework.data:spring-data-jpa',
+            'org.springframework.data:spring-data-elasticsearch',
+            'org.springframework.data:spring-data-envers',
+
+            // spring boot admin
+            "de.codecentric:spring-boot-admin-server:$springBootAdminVersion",
+            "de.codecentric:spring-boot-admin-starter-server:$springBootAdminVersion",
+            "de.codecentric:spring-boot-admin-server-ui:$springBootAdminVersion",
+
+            // chaos monkey
+            //// https://github.com/codecentric/chaos-monkey-spring-boot
+            'de.codecentric:chaos-monkey-spring-boot:2.6.1',
+
+            // camel
+            'org.apache.camel:camel-caffeine',
+            'org.apache.camel:camel-cron',
+            'org.apache.camel:camel-disruptor',
+            'org.apache.camel:camel-dozer',
+            'org.apache.camel:camel-hazelcast',
+            'org.apache.camel:camel-guava-eventbus',
+            'org.apache.camel:camel-jslt',
+            'org.apache.camel:camel-jsonata',
+            'org.apache.camel:camel-json-patch',
+            'org.apache.camel:camel-micrometer',
+            'org.apache.camel:camel-netty',
+            'org.apache.camel:camel-reactive-streams',
+            'org.apache.camel:camel-xj',
+
+            // camel-spring
+            'org.apache.camel.springboot:camel-spring-boot-starter',
+            'org.apache.camel.springboot:camel-servlet-starter',
+            'org.apache.camel.springboot:camel-jackson-starter',
+            'org.apache.camel.springboot:camel-swagger-java-starter',
+            'org.apache.camel.springboot:camel-saxon-starter',
+            'org.apache.camel.springboot:camel-vertx-starter',
+            'org.apache.camel.springboot:camel-undertow-starter',
+            'org.apache.camel.springboot:camel-grpc-starter',
+            'org.apache.camel.springboot:camel-jsonpath-starter',
+            'org.apache.camel.springboot:camel-dataformat-starter',
+            'org.apache.camel.springboot:camel-saga-starter',
+            'org.apache.camel.springboot:camel-reactive-streams-starter',
+            'org.apache.camel.springboot:camel-metrics-starter',
+            'org.apache.camel.springboot:camel-micrometer-starter',
+            'org.apache.camel.springboot:camel-vm-starter',
+            'org.apache.camel.springboot:camel-xslt-starter',
+            'org.apache.camel.springboot:camel-resilience4j-starter',
+            'org.apache.camel.springboot:camel-scheduler-starter',
+            'org.apache.camel.springboot:camel-timer-starter',
+            'org.apache.camel.springboot:camel-log-starter',
+            'org.apache.camel.springboot:camel-groovy-starter',
+            'org.apache.camel.springboot:camel-disruptor-starter',
+            'org.apache.camel.springboot:camel-websocket-starter',
+            'org.apache.camel.springboot:camel-rxjava-starter',
+            'org.apache.camel.springboot:camel-vertx-starter',
+            'org.apache.camel.springboot:camel-reactor-starter',
+
+            // jackson
+            'com.fasterxml.jackson.datatype:jackson-datatype-jdk8',
+            'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
+            'com.fasterxml.jackson.module:jackson-module-parameter-names',
+            'com.fasterxml.jackson.core:jackson-core',
+
+            // log
+            'org.apache.logging.log4j:log4j-core',
+            'org.apache.logging.log4j:log4j-api',
+            'org.apache.logging.log4j:log4j-web',
+            'org.apache.logging.log4j:log4j-slf4j-impl',
+            'org.apache.logging.log4j:log4j-jcl',
+            'org.apache.logging.log4j:log4j-jul',
+            'org.apache.logging.log4j:log4j-1.2-api',
+            "org.slf4j:jul-to-slf4j:$slf4jVersion",
+            "org.appenders.log4j:log4j2-elasticsearch6-bulkprocessor:$log4j2ElasticsearchVersion",
+            "org.appenders.log4j:log4j2-elasticsearch-jest:$log4j2ElasticsearchVersion",
+            "org.appenders.log4j:log4j2-elasticsearch-ahc:$log4j2ElasticsearchVersion",
+            'com.github.ivanocortesini:log4j-2-elastic:1.0.1',
+            //// http://logging.paluch.biz/
+            'biz.paluch.logging:logstash-gelf:1.15.0',
+
+            // swagger
+            "io.springfox:springfox-swagger2:$springfoxSwaggerVersion",
+            "io.springfox:springfox-swagger-ui:$springfoxSwaggerVersion",
+            "io.springfox:springfox-spring-webflux:$springfoxSwaggerVersion",
+
+            //camunda
+            "org.camunda.bpm.extension.reactor:camunda-bpm-reactor-spring-starter:$camundaBpmReactorVersion",
+            "org.camunda.bpm.extension.reactor:camunda-bpm-reactor-spring:$camundaBpmReactorVersion",
+            "org.camunda.bpm.extension.rest:camunda-rest-client-spring-boot-starter:$camundaRestClientSpringBoot",
+            "org.camunda.bpm.extension.graphql:camunda-bpm-graphql:$camundaBpmGraphql",
+            "io.holunda.data:camunda-bpm-data:$camundaBpmDataVersion",
+            "org.camunda.bpm.extension.batch:camunda-bpm-custom-batch-core:$camundaBpmCustomBatchCore",
+            "org.camunda.bpm.extension:camunda-bpm-mail-core:$camundaBpmMailCoreVersion",
+            "org.camunda.bpm.extension.mockito:camunda-bpm-mockito:$camundaBpmMockitoVersion",
+            "org.camunda.bpm.extension:camunda-bpm-junit5:$camundaBpmJunit5",
+            "org.camunda.bpm.extension.rest:camunda-rest-client-spring-boot-starter:$camundaRestClientSpringBootStarterVersion",
+            'org.camunda.bpm:camunda-engine-rest-core',
+            "org.camunda.spin:camunda-spin-core:$camundaSpinVersion",
+            "org.camunda.spin:camunda-spin-dataformat-all:$camundaSpinVersion",
+            "org.camunda.connect:camunda-connect-connectors-all:$camundaConnectConnectorsAllVersion",
+            "org.camunda.bpm.assert:camunda-bpm-assert:$camundaBpmAssertVersion",
+
+            // shedlock
+            "net.javacrumbs.shedlock:shedlock-spring:$shedlockVersion",
+            "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:$shedlockVersion",
+            "org.springframework.plugin:spring-plugin-core:$springPluginCoreVersion",
+
+            // p6spy
+            "p6spy:p6spy:$p6spyVersion",
+            "com.github.gavlyukovskiy:p6spy-spring-boot-starter:$springBootDataSourceDecoratorVersion",
+
+            // hibernate 5.x
+//            "org.hibernate:hibernate-java8:$hibernateVersion",
+//            "org.hibernate:hibernate-entitymanager:$hibernateVersion",
+//            "org.hibernate:hibernate-validator:$hibernateValidatorVersion",
+//            "org.jadira.usertype:usertype.core:$usertypeVersion",
+
+            // hibernate 6.x
+            "org.hibernate.orm:hibernate-core:$hibernate6Version",
+            "org.hibernate.orm:hibernate-hikaricp:$hibernate6Version",
+            "org.hibernate.orm:hibernate-jcache:$hibernate6Version",
+            "org.hibernate.orm:hibernate-micrometer:$hibernate6Version",
+
+            // cache
+            "com.github.ben-manes.caffeine:caffeine:$caffeineVersion",
+            "org.cache2k:cache2k-api:$cache2kVersion",
+            "org.cache2k:cache2k-core:$cache2kVersion",
+            "com.hazelcast:hazelcast:$hazelcastVersion",
+            "com.hazelcast:hazelcast-spring:$hazelcastVersion",
+            'com.hazelcast:hazelcast-hibernate53:2.3.0',
+
+            // scheculer
+            "org.springframework.boot:spring-boot-starter-quartz:$springBootStarterQuartzVersion",
+            "org.quartz-scheduler:quartz:$quartzVersion",
+            "com.coreoz:wisp:$wispVersion",
+            "org.jobrunr:jobrunr-spring-boot-starter:$jobrunrVersion",
+            "org.jobrunr:jobrunr-spring-boot-native:$jobrunrVersion",
+
+            // db
+            "org.flywaydb:flyway-core:$flywayVersion",
+            "com.zaxxer:HikariCP:$hikariCPVersion",
+            "com.h2database:h2:$h2Version",
+
+            // datetime
+            "joda-time:joda-time:$jodaTimeVersion",
+            'joda-time:joda-time-hibernate:1.4',
+
+            // queue
+            "com.lmax:disruptor:$disruptorVersion",
+            "com.conversantmedia:disruptor:$conversantmediaDisruptorVersion",
+
+            // openHTF
+            'net.openhft:affinity',
+            'net.openhft:chronicle-wire',
+            'net.openhft:chronicle-values',
+            'net.openhft:chronicle-bytes',
+            'net.openhft:chronicle-threads',
+            'net.openhft:chronicle-ticker',
+            'net.openhft:chronicle-network',
+            'net.openhft:chronicle-map',
+            'net.openhft:chronicle-queue',
+            'net.openhft:chronicle-logger-log4j-2',
+            'net.openhft:chronicle-logger-benchmark',
+
+            // io
+            "org.jboss.xnio:xnio-api:$xnioVersion",
+
+            //// RScoket
+            'io.rsocket:rsocket-transport-netty',
+            'io.rsocket:rsocket-load-balancer',
+            'org.springframework.boot:spring-boot-starter-rsocket',
+
+            //// netty
+            'io.netty:netty-all',
+
+            /// grpc
+            "io.grpc:grpc-netty:$ioGrpcVersion",
+            "io.grpc:grpc-all:$ioGrpcVersion",
+
+            //// http client5
+            "org.apache.httpcomponents.client5:httpclient5:$apacheHttpClient5Version",
+            "org.apache.httpcomponents.client5:httpclient5-fluent:$apacheHttpClient5Version",
+            "org.apache.httpcomponents.client5:httpclient5-cache:$apacheHttpClient5Version",
+
+            //// http client4
+            "org.apache.httpcomponents:httpclient:$apacheHttpClient4Version",
+
+            //// openfeign
+            'org.springframework.cloud:spring-cloud-starter-openfeign',
+            "com.playtika.reactivefeign:feign-reactor-spring-cloud-starter:$feignReactorSpringCloudStarterVersion",
+            'io.github.openfeign:feign-core',
+            'io.github.openfeign:feign-jackson',
+            'io.github.openfeign:feign-micrometer',
+            'io.github.openfeign:feign-reactive-wrappers',
+            'io.github.openfeign:feign-benchmark:10.2.3',
+            'io.github.openfeign:feign-vertx:5.1.1',
+            'io.github.openfeign:feign-gson',
+
+            //// thrift
+            "org.apache.thrift:libthrift:$thriftVersion",
+            "org.apache.thrift:libthrift:$thriftVersion",
+
+
+            // resilience4j
+            'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j',
+            'org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j',
+            "io.github.resilience4j:resilience4j-circuitbreaker:$resilience4jVersion",
+            "io.github.resilience4j:resilience4j-feign:$resilience4jVersion",
+            "io.github.resilience4j:resilience4j-micrometer:$resilience4jVersion",
+            "io.github.resilience4j:resilience4j-reactor:$resilience4jVersion",
+
+            // bucket4j
+            "com.github.vladimir-bukhtoyarov:bucket4j-core:$bucket4jVersion",
+            "com.github.vladimir-bukhtoyarov:bucket4j-jcache:$bucket4jVersion",
+            'com.github.vladimir-bukhtoyarov:rolling-metrics:2.0.5',
+            "com.github.vladimir-bukhtoyarov:bucket4j-hazelcast:$bucket4jVersion",
+            "com.github.vladimir-bukhtoyarov:bucket4j-caffeine:$bucket4jVersion",
+            'com.github.vladimir-bukhtoyarov:rolling-metrics-micrometer:3.0.0',
+
+            // metrics
+            "org.springframework.metrics:spring-metrics:$springMetricsVersion",
+            'io.micrometer:micrometer-core',
+            'io.micrometer:micrometer-registry-prometheus',
+            'io.micrometer:micrometer-registry-elastic',
+            'io.prometheus:simpleclient_pushgateway:0.16.0',
+            'io.micrometer.prometheus:prometheus-rsocket-spring:1.5.0',
+            'io.rsocket:rsocket-micrometer',
+
+            "de.svenkubiak:jBCrypt:$jBCryptVersion",
+
+            // event bus
+            "com.fluxtion:runtime:$fluxtionVersion",
+            "com.fluxtion:compiler:$fluxtionVersion",
+            'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-orchestration-simple-dsl-starter',
+            'io.eventuate.tram.sagas:eventuate-tram-sagas-reactive-orchestration-simple-dsl',
+            'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-reactive-participant',
+            'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-participant',
+            'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-in-memory',
+
+            // cep
+            "io.siddhi:siddhi-core:$siddhiVersion",
+            "io.siddhi:siddhi-query-api:$siddhiVersion",
+            "io.siddhi:siddhi-query-compiler:$siddhiVersion",
+            "io.siddhi:siddhi-annotations:$siddhiVersion",
+
+            // thread control
+            "com.alibaba:transmittable-thread-local:$transmittableThreadLocalVersion",
+
+            // template
+            "org.codehaus.groovy:groovy-all:$groovy3Version",
+
+            // vertx
+            "io.vertx:vertx-core:$vertxVersion",
+            "io.vertx:vertx-rx-java2:$vertxVersion",
+            "io.vertx:vertx-hazelcast:$vertxVersion",
+
+            // reactive
+            "io.lamma:lamma_2.11:$lamma211Version",
+            "org.awaitility:awaitility:$awaitilityVersion",
+            "io.reactivex.rxjava3:rxjava:$rxjava3Version",
+            "io.reactivex.rxjava2:rxjava:$rxjava2Version",
+            "org.jooq:jool:$joolVersion",
+            "io.vavr:vavr:$vavrVersion",
+            "dev.failsafe:failsafe:$failsafeVersion",
+            "io.github.pellse:assembler-util:$assemblerUtilVersion",
+            "io.smallrye.reactive:mutiny:$smallryeMutinyVersion",
+            "io.smallrye.reactive:smallrye-reactive-messaging:$smallryeReactiveMessagingVersion",
+
+            // reactor
+            'io.projectreactor:reactor-core',
+            'io.projectreactor:reactor-core-micrometer',
+            'io.projectreactor:reactor-tools',
+            'io.projectreactor:reactor-test',
+            'io.projectreactor.netty:reactor-netty',
+            'io.projectreactor.addons:reactor-pool-micrometer',
+            'io.projectreactor.addons:reactor-adapter',
+            'io.projectreactor.addons:reactor-extra',
+
+            // unique id
+            "io.leego:unique-client:$uniqueVersion",
+            "io.leego:unique-client-spring-boot-starter:$uniqueVersion",
+            "io.leego:unique-mybatis-support:$uniqueVersion",
+            "io.leego:unique-core:$uniqueVersion",
+            "io.leego:unique-server-spring-boot-starter:$uniqueVersion",
+            "io.leego:unique-server-console:$uniqueVersion",
+
+            // togglz
+            "org.togglz:togglz-servlet:$togglzVersion",
+            "org.togglz:togglz-spring-web:$togglzVersion",
+
+            // others
+            "com.shekhargulati:strman:$strmanVersion",
+            "com.github.ulisesbocchio:jasypt-spring-boot-starter:$jasyptSpringBootStarterVersion",
+            "com.google.guava:guava:$guavaVersion",
+            "org.apache.commons:commons-lang3:$commonsLang3Version",
+            "commons-io:commons-io:$commonsIoVersion",
+            "org.apache.commons:commons-collections4:$commonsCollections4Version",
+            "me.paulschwarz:spring-dotenv:$springDotenvVersion",
+            "com.kirekov:java-useful-utils:$javaUsefulUtilsVersion",
+            "com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion",
+            "org.yaml:snakeyaml:$snakeyamlVersion",
+    )
+
+    api(
+            "com.fasterxml.jackson.core:jackson-databind:$jacksonDatabindVersion",
+            'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml',
+    )
+
+    // data format
+    implementation "com.dslplatform:dsl-json-java8:$dslJsonVersion"
+    annotationProcessor "com.dslplatform:dsl-json-java8:$dslJsonVersion"
+    provided 'javax.json.bind:javax.json.bind-api:1.0'
+
+    implementation "io.logz.sawmill:sawmill-core:$sawmillVersion"
+    implementation "com.schibsted.spt.data:jslt:$jsltVersion"
+
+    implementation "com.flipkart.zjsonpatch:zjsonpatch:$zjsonpatchVersion"
+
+    implementation "com.github.java-json-tools:json-patch:$jsonPatchVersion"
+
+    implementation "org.glassfish:javax.json:$jsonPointerVersion"
+
+    implementation "com.github.jsurfer:jsurfer-gson:$jsurferVersion"
+    implementation "com.github.jsurfer:jsurfer-jackson:$jsurferVersion"
+    implementation "com.github.jsurfer:jsurfer-fastjson:$jsurferVersion"
+    implementation "com.github.jsurfer:jsurfer-jsonsimple:$jsurferVersion"
+
+    implementation "com.jayway.jsonpath:json-path:$jsonPathVersion"
+
+
+    // Flogger
+    api("com.google.flogger:flogger:$floggerVersion")
+    api("com.google.flogger:flogger-log4j2-backend:$floggerVersion") {
+        exclude group: 'org.apache.logging.log4j'
+    }
+
+    // for complier
+    compileOnly(
+            "javax.el:javax.el-api:$javaxElApiVersion",
+            "javax.servlet:javax.servlet-api:$servletApiVersion",
+            "jakarta.validation:jakarta.validation-api:$validationApiVersion",
+    )
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor:$springBootVersion"
+
+    // https://github.com/lets-mica/mica-auto
+    compileOnly "net.dreamlu:mica-auto:${micaAutoVersion}"
+    testCompileOnly "net.dreamlu:mica-auto:${micaAutoVersion}"
+    annotationProcessor "net.dreamlu:mica-auto:${micaAutoVersion}"
+    testAnnotationProcessor "net.dreamlu:mica-auto:${micaAutoVersion}"
+
+    // lombok dependencies
+    compileOnly "org.projectlombok:lombok:$lombokVersion"
+    testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+    annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+    testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+    // mapstruct
+    implementation "org.mapstruct:mapstruct:$mapstructVersion"
+    annotationProcessor "org.mapstruct:mapstruct-processor:$mapstructVersion"
+
+    // lombok-mapstruct binding
+    annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBinding"
+
+    // auto service
+    implementation "com.google.auto.service:auto-service:$autoServiceVersion"
+    annotationProcessor "com.google.auto.service:auto-service:$autoServiceVersion"
+
+    testImplementation(
+            "org.awaitility:awaitility:$awaitilityVersion",
+            "org.mockito:mockito-core:$mockitoVersion",
+            "org.mockito:mockito-junit-jupiter:$mockitoVersion",
+            "org.hamcrest:hamcrest-core:$hamcrestCoreVersion",
+            "org.powermock:powermock-api-mockito2:$powermockApiMockito2Version",
+            'org.springframework.boot:spring-boot-starter-test',
+            "org.springframework:spring-test:$springVersion",
+            // junit5
+            "org.junit.jupiter:junit-jupiter-api:$junitVersion",
+            "com.alibaba:fastjson:$fastjsonVersion",
+    )
+
+    testCompileOnly(
+            "org.junit.jupiter:junit-jupiter-params:$junitVersion",
+            "org.junit-pioneer:junit-pioneer:$junitPioneerVersion",
+    )
+
+    testRuntimeOnly(
+            'org.springframework.boot:spring-boot-properties-migrator',
+            "org.junit.jupiter:junit-jupiter-engine:$junitVersion",
+            "net.bytebuddy:byte-buddy:$bytebuddyVersion",
+            "net.bytebuddy:byte-buddy-agent:$bytebuddyVersion",
+    )
+
+    // OpenAPI : springdoc
+    implementation("org.springdoc:springdoc-openapi-ui:$springdocOpenapiVersion")
+}
+
+configurations {
+    all {
+        //exclude these for flogger
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+        exclude module: 'commons-logging'
+        //exclude default embedded tomcat server
+        exclude module: 'spring-boot-starter-tomcat'
+        // cobertura use logback to logging that conflict with log4j2. ignore it.
+        // ref: https://github.com/mojohaus/cobertura-maven-plugin/issues/6
+        // ref: https://github.com/stevesaliman/gradle-cobertura-plugin/issues/73
+        exclude module: 'logback-classic'
+        exclude module: 'slf4j-simple'
+        exclude module: 'log4j-to-slf4j'
+        exclude group: 'log4j', module: 'log4j'
+        exclude module: 'spring-boot-starter-log4j2'
+    }
+}
+
+dependencyUpdates.resolutionStrategy {
+    componentSelection { rules ->
+        rules.all { ComponentSelection selection ->
+            boolean rejected = ['alpha', 'beta', 'm', 'preview'].any { qualifier ->
+                selection.candidate.version ==~ /(?i).*[.-]${qualifier}[.\d-]*/
+            }
+            if (!rejected)
+                rejected = selection.candidate.group == 'io.github.resilience4j' && selection.candidate.version == '1.7.1'
+            if (!rejected)
+                rejected = selection.candidate.module == 'jakarta.validation-api' && selection.candidate.version == '3.0.0'
+            if (!rejected)
+                rejected = selection.candidate.module == 'commons-io' && selection.candidate.version == '20030203.000550'
+            if (!rejected)
+                rejected = selection.candidate.module == 'usertype.core'
+            if (!rejected)
+                rejected = selection.candidate.module == 'jakarta.validation-api'
+
+            if (rejected) {
+                selection.reject('Release Candidate')
+            }
+        }
+    }
+}
+
+bootJar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+bootWar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+war {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+jar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}
+
+wrapper {
+    gradleVersion = delegate.gradleVersion
+    distributionUrl = distributionUrl.replace("bin", "all")
+}
