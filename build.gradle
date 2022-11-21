@@ -97,10 +97,15 @@ dependencies {
 
     implementation(
             // spring
+            'org.springframework:spring-core',
+            'org.springframework:spring-beans',
             'org.springframework:spring-aspects',
             'org.springframework.boot:spring-boot-autoconfigure',
             'org.springframework:spring-context',
-            'org.springframework.vault:spring-vault',
+            'org.springframework:spring-webflux',
+
+            // vault
+            'org.springframework.vault:spring-vault-core:2.3.1',
 
             // spring boot
             'org.springframework.boot:spring-boot-starter-web',
@@ -109,10 +114,12 @@ dependencies {
             'org.springframework.boot:spring-boot-starter-actuator',
             'org.springframework.boot:spring-boot-autoconfigure',
             'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-starter-webflux',
 
             // spring cloud
             'org.springframework.cloud:spring-cloud-starter-loadbalancer',
             'org.springframework.cloud:spring-cloud-bus',
+            'org.springframework.cloud:spring-cloud-starter-vault-config',
 
             // spring data
             'org.springframework.data:spring-data-commons',
@@ -260,6 +267,9 @@ dependencies {
             // datetime
             "joda-time:joda-time:$jodaTimeVersion",
             'joda-time:joda-time-hibernate:1.4',
+            'net.objectlab.kit:datecalc-joda:1.4.8',
+            'net.objectlab.kit:objectlab-utils:1.4.8',
+            'de.jollyday:jollyday:0.4.9',
 
             // queue
             "com.lmax:disruptor:$disruptorVersion",
