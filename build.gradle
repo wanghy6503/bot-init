@@ -3,6 +3,7 @@ buildscript {
         flatDir { dirs "$rootProject.projectDir/libs" }
         mavenLocal()
         jcenter()
+        mavenCentral()
         maven {
             url 'https://plugins.gradle.org/m2/'
         }
