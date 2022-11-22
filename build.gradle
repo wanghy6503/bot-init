@@ -259,7 +259,7 @@ dependencies {
             "org.quartz-scheduler:quartz:$quartzVersion",
             "com.coreoz:wisp:$wispVersion",
             "org.jobrunr:jobrunr-spring-boot-starter:$jobrunrVersion",
-            "org.jobrunr:jobrunr-spring-boot-native:$jobrunrVersion",
+//            "org.jobrunr:jobrunr-spring-boot-native:$jobrunrVersion",
 
             // db
             "org.flywaydb:flyway-core:$flywayVersion",
@@ -366,7 +366,7 @@ dependencies {
             'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-in-memory',
 
             // cep
-            "io.siddhi:siddhi-core:$siddhiVersion",
+//            "io.siddhi:siddhi-core:$siddhiVersion",
             "io.siddhi:siddhi-query-api:$siddhiVersion",
             "io.siddhi:siddhi-query-compiler:$siddhiVersion",
             "io.siddhi:siddhi-annotations:$siddhiVersion",
