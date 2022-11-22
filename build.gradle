@@ -36,7 +36,6 @@ licenseReport {
     renderers += [new com.github.jk1.license.render.InventoryHtmlReportRenderer('third-party-libs.html', 'Back-End Libraries')]
     renderers += [new com.github.jk1.license.render.SimpleHtmlReportRenderer('third-party-libs-simple.html')]
     renderers += [new com.github.jk1.license.render.JsonReportRenderer('third-party-libs.json')]
-    importers = [new com.github.jk1.license.importer.XmlReportImporter("For Test", new File("$rootProject.projectDir/gradle/license", "externalDependencies.xml"))]
     filters = [new com.github.jk1.license.filter.LicenseBundleNormalizer()]
     allowedLicensesFile = new File("$rootProject.projectDir/gradle/license/allowed-licenses.json")
 }
