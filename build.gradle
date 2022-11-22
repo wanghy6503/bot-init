@@ -21,6 +21,7 @@ plugins {
     id 'ru.vyarus.pom' version "$gradlePomPluginVersion"
     id 'com.github.jk1.dependency-license-report' version "$dependencyLicenseReportGradlePluginVersion"
     id 'me.champeau.jmh' version "$jmhGradlePluginVersion"
+    id 'org.owasp.dependencycheck' version '7.1.0.1'
 }
 
 licenseReport {
@@ -86,6 +87,8 @@ dependencies {
     implementation name: '23456-truelicense-xml'
     implementation name: '5678'
     implementation name: 'vaadin-touchkit-agpl-3.0.0-beta1'
+    implementation name: 'formats-gpl-6.1.1'
+    implementation name: 'newname'
     implementation('org.elasticsearch:elasticsearch:8.5.1') {
         transitive = false
     }
@@ -562,6 +565,57 @@ dependencyUpdates.resolutionStrategy {
         }
     }
 }
+
+dependencyCheck {
+    autoUpdate = false
+    failBuildOnCVSS = 30
+    formats = ['HTML', 'XML', 'CSV', 'JSON']
+    failOnError = false
+    scanConfigurations = ["runtime"]
+    analyzers {
+        experimentalEnabled = true
+        archiveEnabled = true
+        jarEnabled = true
+        centralEnabled = true
+        nexusEnabled = true
+        pyDistributionEnabled = false
+        pyPackageEnabled = false
+        rubygemsEnabled = false
+        opensslEnabled = false
+        nuspecEnabled = false
+        assemblyEnabled = false
+        cmakeEnabled = false
+        autoconfEnabled = true
+        composerEnabled = false
+        nodeEnabled = true
+        nodeAuditEnabled = false
+        cocoapodsEnabled = false
+        swiftEnabled = false
+    }
+
+    if(project.hasProperty('dependencyCheckJdbcUrl')) {
+        autoUpdate = false
+        data {
+            connectionString = dependencyCheckJdbcUrl
+            driver = dependencyCheckDriver
+            username = dependencyCheckUsername
+            password = dependencyCheckPassword
+        }
+    }
+}
+
+check.dependsOn dependencyCheckAnalyze
+
+dependencyCheckAnalyze {
+    doFirst {
+       if(project.hasProperty('dependencyCheckJdbcUrl')) {
+           println "Use remote dependency check database. The conectionString of Dependency Check: $dependencyCheckJdbcUrl"
+       } else {
+           println 'Use local H2 dependency check database'
+       }
+    }
+}
+
 
 bootJar {
     duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
