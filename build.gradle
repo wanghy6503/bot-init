@@ -366,10 +366,7 @@ dependencies {
             'io.eventuate.tram.sagas:eventuate-tram-sagas-spring-in-memory',
 
             // cep
-//            "io.siddhi:siddhi-core:$siddhiVersion",
-            "io.siddhi:siddhi-query-api:$siddhiVersion",
-            "io.siddhi:siddhi-query-compiler:$siddhiVersion",
-            "io.siddhi:siddhi-annotations:$siddhiVersion",
+            "io.siddhi:siddhi-core:$siddhiVersion",
 
             // thread control
             "com.alibaba:transmittable-thread-local:$transmittableThreadLocalVersion",
@@ -603,7 +600,7 @@ dependencyCheck {
     }
 }
 
-check.dependsOn dependencyCheckAnalyze
+//check.dependsOn dependencyCheckAnalyze
 
 dependencyCheckAnalyze {
     doFirst {
