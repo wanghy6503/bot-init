@@ -91,6 +91,7 @@ dependencies {
     implementation name: 'formats-gpl-6.1.1'
     implementation name: 'newname'
     implementation name: 'hsqldb-1.8.0.10-rename'
+    
     implementation('org.elasticsearch:elasticsearch:8.5.1') {
         transitive = false
     }
