@@ -27,7 +27,6 @@ plugins {
 
 licenseReport {
     outputDir = "$projectDir/build/reports/dependency-license"
-
     projects = [project] + project.subprojects
     configurations = ['testCompileClasspath', 'testRuntimeClasspath']
     excludeGroups = [group]
