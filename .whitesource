@@ -1,6 +1,6 @@
 {
   "scanSettings": {
-    "baseBranches": []
+    "baseBranches": [],
     "enableLicenseViolations": true
   },
   "checkRunSettings": {
