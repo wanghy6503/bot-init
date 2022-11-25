@@ -153,6 +153,15 @@ dependencies {
             'org.apache.camel:camel-netty',
             'org.apache.camel:camel-reactive-streams',
             'org.apache.camel:camel-xj',
+            'org.apache.camel:camel-atlasmap',
+            'org.apache.camel:camel-activemq',
+            // only support for jwe?
+            'org.apache.camel:camel-cxf:3.17.0',
+            // fixed length parser
+            'org.apache.camel:camel-univocity-parsers',
+            // fixed length parser
+            'org.apache.camel:camel-bindy',
+            //
 
             // camel-spring
             'org.apache.camel.springboot:camel-spring-boot-starter',
@@ -181,12 +190,36 @@ dependencies {
             'org.apache.camel.springboot:camel-rxjava-starter',
             'org.apache.camel.springboot:camel-vertx-starter',
             'org.apache.camel.springboot:camel-reactor-starter',
+            'org.apache.camel.springboot:camel-activemq-starter',
+
+            // hawtio for camel
+            //// https://github.com/hawtio/hawtio
+            'io.hawt:hawtio-springboot:2.16.1',
+
+            // jolokia
+            //// https://github.com/rhuss/jolokia
+            'org.jolokia:jolokia:1.7.1',
+            'org.jolokia:jolokia-jvm:1.7.1',
+            'org.jolokia:jolokia-jmx:1.7.1',
+            'org.jolokia:jolokia-client-java:1.7.1',
+
+            // atlasmap
+            ////https://github.com/atlasmap/atlasmap
+            'io.atlasmap:atlas-dfdl-module:2.5.2',
 
             // jackson
             'com.fasterxml.jackson.datatype:jackson-datatype-jdk8',
             'com.fasterxml.jackson.datatype:jackson-datatype-jsr310',
             'com.fasterxml.jackson.module:jackson-module-parameter-names',
             'com.fasterxml.jackson.core:jackson-core',
+
+            //activeMQ
+            'org.apache.activemq:activemq-broker:5.17.2',
+            'org.apache.activemq:activemq-spring:5.17.2',
+//            'org.apache.activemq:activemq-camel:5.16.5',
+            'org.apache.activemq:artemis-server:2.27.0',
+            'org.apache.activemq:artemis-cli:2.27.0',
+            'org.apache.activemq:artemis-jms-server:2.27.0',
 
             // log
             'org.apache.logging.log4j:log4j-core',
@@ -290,6 +323,9 @@ dependencies {
             'net.openhft:chronicle-queue',
             'net.openhft:chronicle-logger-log4j-2',
             'net.openhft:chronicle-logger-benchmark',
+
+            // jose, for jwe
+            'com.nimbusds:nimbus-jose-jwt:9.25.6',
 
             // io
             "org.jboss.xnio:xnio-api:$xnioVersion",
