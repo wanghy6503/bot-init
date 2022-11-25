@@ -79,7 +79,6 @@ dependencies {
     implementation name: 'PdfLayoutMgr2-2.4.9'
     implementation name: 'truelicense-core-2.6.6'
     implementation name: '123456'
-    implementation name: '56789'
     implementation name: 'itextpdf-5.5.11-rename'
     implementation name: 'kernel-7.2.4'
     implementation name: '23456-truelicense-xml'
