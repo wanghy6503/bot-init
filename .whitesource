@@ -4,12 +4,14 @@
     "enableLicenseViolations": true
   },
   "checkRunSettings": {
+    "enableLicenseViolations": true,
     "vulnerableCheckRunConclusionLevel": "failure",
     "displayMode": "diff",
     "useMendCheckNames": true
   },
   "issueSettings": {
     "minSeverityLevel": "LOW",
+    "displayLicenseViolations": true,
     "issueType": "DEPENDENCY"
   }
 }
