@@ -321,6 +321,7 @@ dependencies {
             'net.openhft:affinity',
             'net.openhft:chronicle-wire',
             'net.openhft:chronicle-values',
+            //// for bytebuffer
             'net.openhft:chronicle-bytes',
             'net.openhft:chronicle-threads',
             'net.openhft:chronicle-ticker',
@@ -467,6 +468,8 @@ dependencies {
             "com.kirekov:java-useful-utils:$javaUsefulUtilsVersion",
             "com.nimbusds:nimbus-jose-jwt:$nimbusJoseVersion",
             "org.yaml:snakeyaml:$snakeyamlVersion",
+            // ByteBuffer Implementation
+            'com.cloudhopper:ch-commons-util:6.0.4',
     )
 
     api(
